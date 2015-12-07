@@ -16,8 +16,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MATRIX_DEBUG_H_
-#define __MATRIX_DEBUG_H_
+#ifndef __MATRIX_DEBUG_H__
+#define __MATRIX_DEBUG_H__
 
 #include <glib.h>
 
@@ -38,12 +38,10 @@ void matrix_debug(MatrixDebugFlags flag, const gchar *format, ...) G_GNUC_PRINTF
 
 void matrix_debug_free (void);
 
-#endif
+#endif /* __MATRIX_DEBUG_H__ */
 
 #ifdef MATRIX_DEBUG_FLAG
-
-#undef MATRIX_DEBUG
-#define MATRIX_DEBUG(format, ...) \
+# undef MATRIX_DEBUG
+# define MATRIX_DEBUG(format, ...) \
     matrix_debug(MATRIX_DEBUG_FLAG, "%s: " format, G_STRFUNC, ##__VA_ARGS__)
-
-#endif
+#endif /* MATRIX_DEBUG_FLAG */

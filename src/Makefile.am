@@ -10,6 +10,10 @@ libmatrix_convenience_la_SOURCES = \
 	matrix-protocol.h \
 	matrix-debug.c \
 	matrix-debug.h \
+	matrix-handles.c \
+	matrix-handles.h \
+	matrix-connection.c \
+	matrix-connection.h \
 	$(NULL)
 
 nodist_libmatrix_convenience_la_SOURCES = \

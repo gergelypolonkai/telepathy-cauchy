@@ -17,24 +17,86 @@
  */
 
 #include "matrix-protocol.h"
+#include "matrix-handles.h"
+#include "matrix-connection.h"
+
+#include <dbus/dbus-protocol.h>
 
 #define PROTOCOL_NAME "matrix"
 
+static gboolean
+filter_account(const TpCMParamSpec *paramspec, GValue *value, GError **err)
+{
+    const gchar *matrixid = g_value_get_string(value);
+
+    g_assert(matrixid);
+    g_assert(G_VALUE_HOLDS_STRING(value));
+
+    if (!matrix_id_is_valid(matrixid, TRUE)) {
+        g_set_error(err,
+                    TP_ERROR, TP_ERROR_INVALID_HANDLE,
+                    "Invalid account name '%s'", matrixid);
+
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static const TpCMParamSpec matrix_params[] = {
+    {
+        "account",
+        DBUS_TYPE_STRING_AS_STRING, G_TYPE_STRING,
+        TP_CONN_MGR_PARAM_FLAG_REQUIRED,
+        NULL, 0, filter_account
+    },
+    {
+        "homeserver",
+        DBUS_TYPE_STRING_AS_STRING, G_TYPE_STRING,
+        TP_CONN_MGR_PARAM_FLAG_REQUIRED
+    },
+    {
+        "password",
+        DBUS_TYPE_STRING_AS_STRING, G_TYPE_STRING,
+        TP_CONN_MGR_PARAM_FLAG_SECRET
+    },
+    {NULL, NULL, 0, 0, NULL, 0}
+};
+
 G_DEFINE_TYPE(MatrixProtocol, matrix_protocol, TP_TYPE_BASE_PROTOCOL);
 
-static void
-matrix_protocol_finalize(GObject *gobject)
+static const TpCMParamSpec *
+get_parameters(TpBaseProtocol *self G_GNUC_UNUSED)
 {
-    g_signal_handlers_destroy(gobject);
-    G_OBJECT_CLASS(matrix_protocol_parent_class)->finalize(gobject);
+    return matrix_params;
+}
+
+static TpBaseConnection *
+new_connection(TpBaseProtocol *protocol G_GNUC_UNUSED,
+               GHashTable *params,
+               GError **err G_GNUC_UNUSED)
+{
+    return g_object_new(MATRIX_TYPE_CONNECTION,
+                        "homeserver", tp_asv_get_string(params, "homeserver"),
+                        "matrix_id", tp_asv_get_string(params, "account"),
+                        "password", tp_asv_get_string(params, "password"),
+                        NULL);
 }
 
 static void
 matrix_protocol_class_init(MatrixProtocolClass *klass)
 {
-    GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+    TpBaseProtocolClass *base_class = (TpBaseProtocolClass *)klass;
 
-    gobject_class->finalize = matrix_protocol_finalize;
+    base_class->get_parameters = get_parameters;
+    base_class->new_connection = new_connection;
+    /*
+    base_class->normalize_contact = normalize_contact;
+    base_class->identify_account = identify_account;
+    base_class->get_interfaces_array = get_interfaces_array;
+    base_class->get_connection_details = get_connection_details;
+    base_class->dup_authentication_types = dup_authentication_types;
+    */
 }
 
 static void

@@ -56,6 +56,10 @@ src/telepathy-matrix.8
 core
 cscope.out
 tags
+GPATH
+GRTAGS
+GSYMS
+GTAGS
 
 tests/test-ctcp-kill-blingbling
 tests/test-ctcp-tokenize
