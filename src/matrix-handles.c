@@ -18,6 +18,8 @@
 
 #include "matrix-handles.h"
 
+#include <telepathy-glib/telepathy-glib.h>
+
 #define MATRIX_DEBUG_FLAG MATRIX_DEBUG_PARSER
 #include "matrix-debug.h"
 
@@ -39,4 +41,21 @@ matrix_id_is_valid(const gchar *matrix_id, gboolean strict_mode)
     /* TODO: Do the actual validation */
 
     return TRUE;
+}
+
+gchar *
+matrix_normalize_id(const gchar *id, GError **err)
+{
+    if (!matrix_id_is_valid(id, FALSE)) {
+        g_set_error(err,
+                    TP_ERROR, TP_ERROR_INVALID_HANDLE,
+                    "Invalid Matrix ID");
+
+        return NULL;
+    }
+
+    /* telepathy-idle sets the nickname to lowercase here. I’m not
+     * sure it can be done with Matrix IDs. TODO: check if it can.
+     */
+    return g_strdup(id);
 }

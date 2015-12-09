@@ -22,5 +22,6 @@
 #include <glib.h>
 
 gboolean matrix_id_is_valid(const gchar *matrix_id, gboolean strict_mode);
+gchar *matrix_normalize_id(const gchar *id, GError **err);
 
 #endif /* __MATRIX_HANDLES_H__ */

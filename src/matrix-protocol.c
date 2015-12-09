@@ -83,6 +83,14 @@ new_connection(TpBaseProtocol *protocol G_GNUC_UNUSED,
                         NULL);
 }
 
+static gchar *
+normalize_contact(TpBaseProtocol *protocol G_GNUC_UNUSED,
+                  const gchar *contact,
+                  GError **err)
+{
+    return matrix_normalize_id(contact, err);
+}
+
 static void
 matrix_protocol_class_init(MatrixProtocolClass *klass)
 {
@@ -90,8 +98,8 @@ matrix_protocol_class_init(MatrixProtocolClass *klass)
 
     base_class->get_parameters = get_parameters;
     base_class->new_connection = new_connection;
-    /*
     base_class->normalize_contact = normalize_contact;
+    /*
     base_class->identify_account = identify_account;
     base_class->get_interfaces_array = get_interfaces_array;
     base_class->get_connection_details = get_connection_details;
