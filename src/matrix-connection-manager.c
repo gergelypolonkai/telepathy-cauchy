@@ -18,13 +18,15 @@
 
 #include "matrix-connection-manager.h"
 #include "matrix-protocol.h"
+#include "matrix-debug.h"
 
 G_DEFINE_TYPE(MatrixConnectionManager, matrix_connection_manager, TP_TYPE_BASE_CONNECTION_MANAGER);
 
 static void
 matrix_connection_manager_finalize(GObject *gobject)
 {
-    g_signal_handlers_destroy(gobject);
+    matrix_debug_free();
+
     G_OBJECT_CLASS(matrix_connection_manager_parent_class)->finalize(gobject);
 }
 
