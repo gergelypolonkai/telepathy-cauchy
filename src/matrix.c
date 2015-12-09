@@ -23,8 +23,8 @@
 #include "matrix-connection-manager.h"
 #include "matrix-debug.h"
 
-static
-TpBaseConnectionManager *_construct_cm(void)
+static TpBaseConnectionManager *
+_construct_cm(void)
 {
     TpBaseConnectionManager *base_cm = TP_BASE_CONNECTION_MANAGER(
             g_object_new(MATRIX_TYPE_CONNECTION_MANAGER, NULL));
@@ -32,16 +32,18 @@ TpBaseConnectionManager *_construct_cm(void)
     return base_cm;
 }
 
-int main(int argc, char **argv) {
+int
+main(int argc, char **argv)
+{
     TpDebugSender *debug_sender;
     int result;
 
-    g_type_init ();
-    tp_debug_divert_messages (g_getenv ("MATRIX_LOGFILE"));
+    g_type_init();
+    tp_debug_divert_messages(g_getenv("MATRIX_LOGFILE"));
 
     matrix_debug_init();
 
-    debug_sender = tp_debug_sender_dup ();
+    debug_sender = tp_debug_sender_dup();
 
     result = tp_run_connection_manager(
             "telepathy-matrix", VERSION,
