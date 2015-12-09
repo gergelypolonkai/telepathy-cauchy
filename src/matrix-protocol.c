@@ -93,6 +93,28 @@ normalize_contact(TpBaseProtocol *protocol G_GNUC_UNUSED,
     return matrix_normalize_id(contact, err);
 }
 
+static gchar *
+identify_account(TpBaseProtocol *protocol G_GNUC_UNUSED,
+                 GHashTable *asv,
+                 GError **err)
+{
+    gchar *id = matrix_normalize_id(tp_asv_get_string(asv, "account"), err);
+    gchar *server;
+    gchar *id_at_server;
+
+    if (id == NULL) {
+        return NULL;
+    }
+
+    server = g_ascii_strdown(tp_asv_get_string(asv, "homeserver"), -1);
+
+    id_at_server = g_strdup_printf("@%s:%s", id, server);
+    g_free(server);
+    g_free(id);
+
+    return id_at_server;
+}
+
 static void
 matrix_protocol_class_init(MatrixProtocolClass *klass)
 {
@@ -101,8 +123,8 @@ matrix_protocol_class_init(MatrixProtocolClass *klass)
     base_class->get_parameters = get_parameters;
     base_class->new_connection = new_connection;
     base_class->normalize_contact = normalize_contact;
-    /*
     base_class->identify_account = identify_account;
+    /*
     base_class->get_interfaces_array = get_interfaces_array;
     base_class->get_connection_details = get_connection_details;
     base_class->dup_authentication_types = dup_authentication_types;
