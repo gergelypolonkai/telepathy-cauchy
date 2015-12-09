@@ -115,6 +115,16 @@ identify_account(TpBaseProtocol *protocol G_GNUC_UNUSED,
     return id_at_server;
 }
 
+static GPtrArray *
+get_interfaces_array(TpBaseProtocol *protocol)
+{
+    GPtrArray *interfaces;
+
+    interfaces = TP_BASE_PROTOCOL_CLASS(matrix_protocol_parent_class)->get_interfaces_array(protocol);
+
+    return interfaces;
+}
+
 static void
 matrix_protocol_class_init(MatrixProtocolClass *klass)
 {
@@ -124,8 +134,8 @@ matrix_protocol_class_init(MatrixProtocolClass *klass)
     base_class->new_connection = new_connection;
     base_class->normalize_contact = normalize_contact;
     base_class->identify_account = identify_account;
-    /*
     base_class->get_interfaces_array = get_interfaces_array;
+    /*
     base_class->get_connection_details = get_connection_details;
     base_class->dup_authentication_types = dup_authentication_types;
     */
