@@ -166,6 +166,16 @@ get_connection_details(TpBaseProtocol *protocol,
     }
 }
 
+static GStrv
+dup_authentication_types(TpBaseProtocol *base)
+{
+    const gchar * const * types[] = {
+        NULL
+    };
+
+    return g_strdupv((GStrv)types);
+}
+
 static void
 matrix_protocol_class_init(MatrixProtocolClass *klass)
 {
@@ -177,9 +187,7 @@ matrix_protocol_class_init(MatrixProtocolClass *klass)
     base_class->identify_account = identify_account;
     base_class->get_interfaces_array = get_interfaces_array;
     base_class->get_connection_details = get_connection_details;
-    /*
     base_class->dup_authentication_types = dup_authentication_types;
-    */
 }
 
 static void
