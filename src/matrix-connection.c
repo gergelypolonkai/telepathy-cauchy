@@ -38,6 +38,17 @@ enum {
     PROP_COUNT
 };
 
+static const gchar *interfaces_always_present[] = {
+    TP_IFACE_CONNECTION_INTERFACE_ALIASING,
+    /*
+    TP_IFACE_CONNECTION_INTERFACE_CONTACT_INFO,
+    MATRIX_IFACE_CONNECTION_INTERFACE_RENAMING,
+    */
+    TP_IFACE_CONNECTION_INTERFACE_REQUESTS,
+    TP_IFACE_CONNECTION_INTERFACE_CONTACTS,
+    NULL
+};
+
 G_DEFINE_TYPE_WITH_CODE(
         MatrixConnection, matrix_connection, TP_TYPE_BASE_CONNECTION,
         G_IMPLEMENT_INTERFACE(
@@ -413,4 +424,12 @@ matrix_connection_init(MatrixConnection *connection)
             G_STRUCT_OFFSET(MatrixConnection, contacts));
     tp_base_connection_register_with_contacts_mixin(
             (TpBaseConnection *)connection);
+}
+
+const gchar * const *
+matrix_connection_get_implemented_interfaces(void)
+{
+    /* We don’t have any conditionally implemented interfaces */
+
+    return interfaces_always_present;
 }

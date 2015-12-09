@@ -51,6 +51,8 @@ struct _MatrixConnectionClass {
 
 GType matrix_connection_get_type(void) G_GNUC_CONST;
 
+const gchar * const *matrix_connection_get_implemented_interfaces(void);
+
 G_END_DECLS
 
 #endif /* __MATRIX_CONNECTION_H__ */

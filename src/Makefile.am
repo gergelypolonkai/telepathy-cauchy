@@ -14,6 +14,10 @@ libmatrix_convenience_la_SOURCES = \
 	matrix-handles.h \
 	matrix-connection.c \
 	matrix-connection.h \
+	matrix-im-manager.c \
+	matrix-im-manager.h \
+	matrix-muc-manager.c \
+	matrix-muc-manager.h \
 	$(NULL)
 
 nodist_libmatrix_convenience_la_SOURCES = \

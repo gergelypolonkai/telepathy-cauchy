@@ -19,10 +19,15 @@
 #include "matrix-protocol.h"
 #include "matrix-handles.h"
 #include "matrix-connection.h"
+#include "matrix-im-manager.h"
+#include "matrix-muc-manager.h"
 
 #include <dbus/dbus-protocol.h>
 
 #define PROTOCOL_NAME "matrix"
+#define ICON_NAME "im-" PROTOCOL_NAME
+#define ENGLISH_NAME "Matrix"
+#define VCARD_FIELD_NAME "x-" PROTOCOL_NAME
 
 static gboolean filter_account(const TpCMParamSpec *, GValue *, GError **);
 
@@ -126,6 +131,42 @@ get_interfaces_array(TpBaseProtocol *protocol)
 }
 
 static void
+get_connection_details(TpBaseProtocol *protocol,
+                       GStrv *connection_interfaces,
+                       GType **channel_managers,
+                       gchar **icon_name,
+                       gchar **english_name,
+                       gchar **vcard_field)
+{
+    if (connection_interfaces != NULL) {
+        *connection_interfaces = g_strdupv(
+                (GStrv)matrix_connection_get_implemented_interfaces());
+    }
+
+    if (channel_managers != NULL) {
+        GType types[] = {
+            MATRIX_TYPE_IM_MANAGER,
+            MATRIX_TYPE_MUC_MANAGER,
+            G_TYPE_INVALID
+        };
+
+        *channel_managers = g_memdup(types, sizeof(types));
+    }
+
+    if (icon_name != NULL) {
+        *icon_name = g_strdup(ICON_NAME);
+    }
+
+    if (vcard_field != NULL) {
+        *vcard_field = g_strdup(VCARD_FIELD_NAME);
+    }
+
+    if (english_name != NULL) {
+        *english_name = g_strdup(ENGLISH_NAME);
+    }
+}
+
+static void
 matrix_protocol_class_init(MatrixProtocolClass *klass)
 {
     TpBaseProtocolClass *base_class = (TpBaseProtocolClass *)klass;
@@ -135,8 +176,8 @@ matrix_protocol_class_init(MatrixProtocolClass *klass)
     base_class->normalize_contact = normalize_contact;
     base_class->identify_account = identify_account;
     base_class->get_interfaces_array = get_interfaces_array;
-    /*
     base_class->get_connection_details = get_connection_details;
+    /*
     base_class->dup_authentication_types = dup_authentication_types;
     */
 }
