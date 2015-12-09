@@ -24,24 +24,7 @@
 
 #define PROTOCOL_NAME "matrix"
 
-static gboolean
-filter_account(const TpCMParamSpec *paramspec, GValue *value, GError **err)
-{
-    const gchar *matrixid = g_value_get_string(value);
-
-    g_assert(matrixid);
-    g_assert(G_VALUE_HOLDS_STRING(value));
-
-    if (!matrix_id_is_valid(matrixid, TRUE)) {
-        g_set_error(err,
-                    TP_ERROR, TP_ERROR_INVALID_HANDLE,
-                    "Invalid account name '%s'", matrixid);
-
-        return FALSE;
-    }
-
-    return TRUE;
-}
+static gboolean filter_account(const TpCMParamSpec *, GValue *, GError **);
 
 static const TpCMParamSpec matrix_params[] = {
     {
@@ -64,6 +47,25 @@ static const TpCMParamSpec matrix_params[] = {
 };
 
 G_DEFINE_TYPE(MatrixProtocol, matrix_protocol, TP_TYPE_BASE_PROTOCOL);
+
+static gboolean
+filter_account(const TpCMParamSpec *paramspec, GValue *value, GError **err)
+{
+    const gchar *matrixid = g_value_get_string(value);
+
+    g_assert(matrixid);
+    g_assert(G_VALUE_HOLDS_STRING(value));
+
+    if (!matrix_id_is_valid(matrixid, TRUE)) {
+        g_set_error(err,
+                    TP_ERROR, TP_ERROR_INVALID_HANDLE,
+                    "Invalid account name '%s'", matrixid);
+
+        return FALSE;
+    }
+
+    return TRUE;
+}
 
 static const TpCMParamSpec *
 get_parameters(TpBaseProtocol *self G_GNUC_UNUSED)
