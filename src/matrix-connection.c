@@ -19,6 +19,8 @@
 
 #include "matrix-connection.h"
 
+#include "matrix-contact-info.h"
+
 static void _aliasing_iface_init(gpointer, gpointer);
 
 struct _MatrixConnectionPrivate {
@@ -40,8 +42,8 @@ enum {
 
 static const gchar *interfaces_always_present[] = {
     TP_IFACE_CONNECTION_INTERFACE_ALIASING,
-    /*
     TP_IFACE_CONNECTION_INTERFACE_CONTACT_INFO,
+    /* TODO:
     MATRIX_IFACE_CONNECTION_INTERFACE_RENAMING,
     */
     TP_IFACE_CONNECTION_INTERFACE_REQUESTS,
@@ -54,14 +56,14 @@ G_DEFINE_TYPE_WITH_CODE(
         G_IMPLEMENT_INTERFACE(
             TP_TYPE_SVC_CONNECTION_INTERFACE_ALIASING,
             _aliasing_iface_init);
-/*
         G_IMPLEMENT_INTERFACE(
             TP_TYPE_SVC_CONNECTION_INTERFACE_CONTACT_INFO,
             matrix_contact_info_iface_init);
+        /* TODO:
         G_IMPLEMENT_INTERFACE(
             MATRIX_TYPE_SVC_CONNECTION_INTERFACE_RENAMING,
             _renaming_interface_init);
-*/
+        */
         G_IMPLEMENT_INTERFACE(
             TP_TYPE_SVC_CONNECTION_INTERFACE_CONTACTS,
             tp_contacts_mixin_iface_init);
@@ -265,10 +267,13 @@ _aliasing_fill_contact_attributes(GObject *obj,
 static void
 matrix_connection_constructed(GObject *obj)
 {
-    //MatrixConnection *connection = MATRIX_CONNECTION(obj);
+    MatrixConnection *connection = MATRIX_CONNECTION(obj);
 
-    //matrix_contact_info_init(connection);
-    tp_contacts_mixin_add_contact_attributes_iface(obj, TP_IFACE_CONNECTION_INTERFACE_ALIASING, _aliasing_fill_contact_attributes);
+    matrix_contact_info_init(connection);
+    tp_contacts_mixin_add_contact_attributes_iface(
+            obj,
+            TP_IFACE_CONNECTION_INTERFACE_ALIASING,
+            _aliasing_fill_contact_attributes);
 }
 
 static void
@@ -320,7 +325,7 @@ _iface_create_channel_managers(TpBaseConnection *base)
     GPtrArray *managers = g_ptr_array_sized_new(1);
     //GObject *manager;
 
-    /*
+    /* TODO:
     manager = g_object_new(MATRIX_TYPE_IM_MANAGER,
                            "connection", connection,
                            NULL);
@@ -334,7 +339,7 @@ _iface_create_channel_managers(TpBaseConnection *base)
     priv->password_manager = tp_simple_password_manager_new(base);
     g_ptr_array_add(managers, priv->password_manager);
 
-    /*
+    /* TODO:
     manager = g_object_new(MATRIX_TYPE_ROOMLIST_MANAGER,
                            "connection", connection,
                            NULL);
@@ -375,7 +380,7 @@ matrix_connection_class_init(MatrixConnectionClass *klass)
     parent_class->connecting = NULL;
     parent_class->connected = NULL;
     parent_class->disconnected = _iface_disconnected;
-    /*
+    /* TODO:
     parent_class->shut_down = _iface_shut_down;
     parent_class->start_connecting = _iface_start_connecting;
     parent_class->get_interfaces_always_present = get_interfaces_always_present;
@@ -406,7 +411,7 @@ matrix_connection_class_init(MatrixConnectionClass *klass)
     g_object_class_install_property(gobject_class, PROP_PASSWORD, param_spec);
 
     tp_contacts_mixin_class_init(gobject_class, G_STRUCT_OFFSET(MatrixConnectionClass, contacts));
-    //matrix_contact_info_class_init(klass);
+    matrix_contact_info_class_init(klass);
 }
 
 static void

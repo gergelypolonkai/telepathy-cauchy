@@ -39,6 +39,7 @@ struct _MatrixConnection {
     /* Parent instance structure */
     TpBaseConnection parent_instance;
     TpContactsMixin contacts;
+    GQueue *contact_info_requests;
 
     /* Instance members */
     MatrixConnectionPrivate *priv;
