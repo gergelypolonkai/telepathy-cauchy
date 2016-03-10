@@ -1,9 +1,38 @@
 # correctly clean the generated source files
 CLEANFILES = $(BUILT_SOURCES) $(man_MANS)
 
-libexec_PROGRAMS=telepathy-matrix
+libexec_PROGRAMS = telepathy-matrix
+
+AM_VALAFLAGS = -C --pkg=telepathy-glib
+
+libtp_matrix_convenience_la_VALA_SOURCES = \
+	$(NULL)
+
+vala-stamp: $(libtp_matrix_convenience_la_VALA_SOURCES)
+	@rm -f vala-temp
+	@touch vala-temp
+	$(AM_V_GEN) $(VALAC) $(AM_VALAFLAGS) $^
+	@mv -f vala-temp $@
+
+CLEANFILES += \
+	$(libtp_matrix_convenience_la_VALA_SOURCES:.vala=.c) \
+	$(NULL)
+
+$(libtp_matrix_convenience_la_VALA_SOURCES:.vala=.c): vala-stamp
+	@if test -f $@; then :; else \
+	    trap 'rm -rf vala-lock vala-stamp' 1 2 13 15; \
+	    if mkdir vala-lock 2> /dev/null; then \
+	        rm -f vala-stamp; \
+	        $(MAKE) $(AM_MAKEFLAGS) vala-stamp; \
+	        rmdir vala-lock; \
+	    else \
+	        while test -d vala-lock; do sleep 1; done; \
+	        test -f vala-stamp; exit $$?; \
+	    fi \
+	fi
 
 libmatrix_convenience_la_SOURCES = \
+	$(libtp_matrix_convenience_la_VALA_SOURCES:.vala=.c) \
 	matrix-connection-manager.c \
 	matrix-connection-manager.h \
 	matrix-protocol.c \

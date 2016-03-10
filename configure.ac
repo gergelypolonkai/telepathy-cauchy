@@ -43,40 +43,6 @@ AM_PROG_AS
 VALAC_CHECK
 
 
-AS_IF([test tp_matrix_nano_version = 0],
-[ # version x.y.z - "official release",
-  # disable extra checks by default
-  AC_ARG_ENABLE([fatal-warnings],
-    [AC_HELP_STRING([--enable-fatal-warnings],
-                    [make various warnings fatal])],
-    [],
-    [enable_fatal_warnings=no])
-],
-[ # version x.y.z.1 - development snapshot,
-  # enable extra checks by default
-  AC_ARG_ENABLE([fatal-warnings],
-    [AC_HELP_STRING([--disable-fatal-warnings],
-                    [make various warnings non-fatal])],
-    [],
-    [enable_fatal_warnings=yes])
-])
-
-TP_COMPILER_WARNINGS([ERROR_CFLAGS], [test "x$enable_fatal_warnings" = xyes],
-  [all \
-   extra \
-   declaration-after-statement \
-   shadow \
-   missing-prototypes \
-   nested-externs \
-   pointer-arith \
-   sign-compare \
-   strict-prototypes \
-   format-security \
-   init-self],
-  [missing-field-initializers \
-   unused-parameter])
-AC_SUBST([ERROR_CFLAGS])
-
 # these aren't really error flags but they serve a similar purpose for us -
 # making the toolchain stricter
 AS_IF([test "x$enable_fatal_warnings" = xyes],
