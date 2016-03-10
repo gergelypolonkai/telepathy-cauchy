@@ -1,18 +1,18 @@
 /*
- * This file is part of telepathy-matrix
+ * This file is part of telepathy-cauchy
  *
- * telepathy-matrix is free software: you can redistribute it and/or
+ * telepathy-cauchy is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
  *
- * telepathy-matrix is distributed in the hope that it will be useful,
+ * telepathy-cauchy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with telepathy-matrix. If not, see
+ * License along with telepathy-cauchy. If not, see
  * <http://www.gnu.org/licenses/>.
  */
 
@@ -20,14 +20,14 @@
 
 #include <telepathy-glib/telepathy-glib.h>
 
-#include "matrix-connection-manager.h"
-#include "matrix-debug.h"
+#include "cauchy-connection-manager.h"
+#include "cauchy-debug.h"
 
 static TpBaseConnectionManager *
 _construct_cm(void)
 {
     TpBaseConnectionManager *base_cm = TP_BASE_CONNECTION_MANAGER(
-            g_object_new(MATRIX_TYPE_CONNECTION_MANAGER, NULL));
+            g_object_new(CAUCHY_TYPE_CONNECTION_MANAGER, NULL));
 
     return base_cm;
 }
@@ -39,14 +39,14 @@ main(int argc, char **argv)
     int result;
 
     g_type_init();
-    tp_debug_divert_messages(g_getenv("MATRIX_LOGFILE"));
+    tp_debug_divert_messages(g_getenv("CAUCHY_LOGFILE"));
 
-    matrix_debug_init();
+    cauchy_debug_init();
 
     debug_sender = tp_debug_sender_dup();
 
     result = tp_run_connection_manager(
-            "telepathy-matrix", VERSION,
+            "telepathy-cauchy", VERSION,
             _construct_cm,
             argc, argv);
 

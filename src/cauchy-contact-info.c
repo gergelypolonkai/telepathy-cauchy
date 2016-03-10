@@ -1,25 +1,25 @@
 /*
- * This file is part of telepathy-matrix
+ * This file is part of telepathy-cauchy
  *
- * telepathy-matrix is free software: you can redistribute it and/or
+ * telepathy-cauchy is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
  *
- * telepathy-matrix is distributed in the hope that it will be
+ * telepathy-cauchy is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with telepathy-matrix. If not, see
+ * License along with telepathy-cauchy. If not, see
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "matrix-contact-info.h"
+#include "cauchy-contact-info.h"
 
-#define MATRIX_DEBUG_FLAG MATRIX_DEBUG_CONNECTION
-#include "matrix-debug.h"
+#define CAUCHY_DEBUG_FLAG CAUCHY_DEBUG_CONNECTION
+#include "cauchy-debug.h"
 
 typedef enum _ContactPresence {
     CONTACT_PRESENCE_UNKNOWN,
@@ -38,7 +38,7 @@ typedef struct _ContactInfoRequest {
 } ContactInfoRequest;
 
 static void
-matrix_contact_info_properties_getter(GObject *gobject,
+cauchy_contact_info_properties_getter(GObject *gobject,
                                       GQuark interface,
                                       GQuark name,
                                       GValue *value,
@@ -58,7 +58,7 @@ matrix_contact_info_properties_getter(GObject *gobject,
 }
 
 void
-matrix_contact_info_class_init(MatrixConnectionClass *klass)
+cauchy_contact_info_class_init(CauchyConnectionClass *klass)
 {
     GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 
@@ -71,13 +71,13 @@ matrix_contact_info_class_init(MatrixConnectionClass *klass)
     tp_dbus_properties_mixin_implement_interface(
             gobject_class,
             TP_IFACE_QUARK_CONNECTION_INTERFACE_CONTACT_INFO,
-            matrix_contact_info_properties_getter,
+            cauchy_contact_info_properties_getter,
             NULL,
             props);
 }
 
 static void
-matrix_contact_info_fill_contact_attributes(GObject *gobject,
+cauchy_contact_info_fill_contact_attributes(GObject *gobject,
                                             const GArray *contacts,
                                             GHashTable *attributes_hash)
 {
@@ -85,7 +85,7 @@ matrix_contact_info_fill_contact_attributes(GObject *gobject,
 }
 
 void
-matrix_contact_info_init(MatrixConnection *connection)
+cauchy_contact_info_init(CauchyConnection *connection)
 {
     connection->contact_info_requests = g_queue_new();
 
@@ -94,18 +94,18 @@ matrix_contact_info_init(MatrixConnection *connection)
     tp_contacts_mixin_add_contact_attributes_iface(
             G_OBJECT(connection),
             TP_IFACE_CONNECTION_INTERFACE_CONTACT_INFO,
-            matrix_contact_info_fill_contact_attributes);
+            cauchy_contact_info_fill_contact_attributes);
 }
 
 static void
-_send_request_contact_info(MatrixConnection *connection,
+_send_request_contact_info(CauchyConnection *connection,
                            ContactInfoRequest *request)
 {
     // TODO: implement actual contact info querying
 }
 
 static void
-_queue_request_contact_info(MatrixConnection *connection,
+_queue_request_contact_info(CauchyConnection *connection,
                             guint handle,
                             const gchar *id,
                             DBusGMethodInvocation *context)
@@ -127,12 +127,12 @@ _queue_request_contact_info(MatrixConnection *connection,
 }
 
 static void
-matrix_connection_request_contact_info(
+cauchy_connection_request_contact_info(
         TpSvcConnectionInterfaceContactInfo *iface,
         guint contact,
         DBusGMethodInvocation *context)
 {
-    MatrixConnection *connection = MATRIX_CONNECTION(iface);
+    CauchyConnection *connection = CAUCHY_CONNECTION(iface);
     TpBaseConnection *base = TP_BASE_CONNECTION(connection);
     TpHandleRepoIface *contact_handles = tp_base_connection_get_handles(
             base,
@@ -151,18 +151,18 @@ matrix_connection_request_contact_info(
 
     id = tp_handle_inspect(contact_handles, contact);
 
-    MATRIX_DEBUG("Queued contact info request for handle: %u (%s)",
+    CAUCHY_DEBUG("Queued contact info request for handle: %u (%s)",
                  contact, id);
 
     _queue_request_contact_info(connection, contact, id, context);
 }
 
 void
-matrix_contact_info_iface_init(gpointer g_iface, gpointer iface_data)
+cauchy_contact_info_iface_init(gpointer g_iface, gpointer iface_data)
 {
     TpSvcConnectionInterfaceContactInfoClass *klass = (TpSvcConnectionInterfaceContactInfoClass *)g_iface;
 
-#define IMPLEMENT(x) tp_svc_connection_interface_contact_info_implement_##x (klass, matrix_connection_##x)
+#define IMPLEMENT(x) tp_svc_connection_interface_contact_info_implement_##x (klass, cauchy_connection_##x)
     IMPLEMENT(request_contact_info);
 #undef IMPLEMENT
 }

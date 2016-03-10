@@ -50,8 +50,8 @@ data/org.freedesktop.Telepathy.ConnectionManager.matrix.service
 extensions/_gen
 extensions/extensions.html
 
-src/telepathy-matrix
-src/telepathy-matrix.8
+src/telepathy-cauchy
+src/telepathy-cauchy.8
 
 core
 cscope.out

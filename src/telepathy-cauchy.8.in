@@ -1,14 +1,14 @@
-.TH TELEPATHY-MATRIX "8" "December 2015" "Telepathy" "D-Bus services"
+.TH TELEPATHY-CAUCHY "8" "December 2015" "Telepathy" "D-Bus services"
 \" This man page was written by Gergely Polonkai for the Telepathy
-\" Matrix Project, but may be used by others.
+\" Cauchy Project, but may be used by others.
 \" Copyright © 2015 Gergely Polonkai <gergely@polonkai.eu>
-\" It may be distributed under the same terms as telepathy-matrix itself.
+\" It may be distributed under the same terms as telepathy-cauchy itself.
 .SH NAME
-telepathy-matrix \- Telepathy connection manager for Matrix.org
+telepathy-cauchy \- Telepathy connection manager for Matrix.org
 .SH SYNOPSIS
-\fB@libexecdir@/telepathy\-matrix\fR
+\fB@libexecdir@/telepathy\-cauchy\fR
 .SH DESCRIPTION
-Telepathy Matrix implements the Telepathy D-Bus specification for
+Telepathy Cauchy implements the Telepathy D-Bus specification for
 Matrix.org, allowing Telepathy clients like
 .BR empathy (1)
 to connect to Matrix.org home servers.
@@ -20,14 +20,14 @@ start it manually for debugging.
 There are no command-line options.
 .SH ENVIRONMENT
 .TP
-\fBMATRIX_LOGFILE\fR=\fIfilename\fR
+\fBCAUCHY_LOGFILE\fR=\fIfilename\fR
 If set, debug output will go to the given file rather than to stderr.
 If \fB+\fR is prepended to the \fIfilename\fR (e.g.
-\fBMATRIX_LOGFILE=+matrix.log\fR), debug output will be appended
+\fBCAUCHY_LOGFILE=+cauchy.log\fR), debug output will be appended
 to the file; otherwise, any existing file will be replaced.
 .TP
 .TP
-\fBMATRIX_DEBUG\fR=\fItype\fR
+\fBCAUCHY_DEBUG\fR=\fItype\fR
 May be set to "all" for full debug output, or various undocumented options
 (which may change from release to release) to filter the output.
 .SH SEE ALSO

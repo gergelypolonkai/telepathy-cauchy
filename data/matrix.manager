@@ -1,9 +1,0 @@
-[ConnectionManager]
-Name = matrix
-BusName = org.freedesktop.Telepathy.ConnectionManager.matrix
-ObjectPath = /org/freedesktop/Telepathy/ConnectionManager/matrix
-
-[Protocol matrix]
-param-matrix-id = s required
-param-homeserver = s required
-param-password = s secret

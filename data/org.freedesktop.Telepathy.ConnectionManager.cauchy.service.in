@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.freedesktop.Telepathy.ConnectionManager.cauchy
+Exec=@libexecdir@/telepathy-cauchy

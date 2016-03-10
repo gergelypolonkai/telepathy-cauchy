@@ -3,23 +3,23 @@
 ### Version numbers
 
 # Release Versions
-m4_define([tp_matrix_major_version], [0])
-m4_define([tp_matrix_minor_version], [0])
-m4_define([tp_matrix_micro_version], [0])
-m4_define([tp_matrix_nano_version], [1])
+m4_define([cauchy_major_version], [0])
+m4_define([cauchy_minor_version], [0])
+m4_define([cauchy_micro_version], [0])
+m4_define([cauchy_nano_version], [1])
 
-m4_define([tp_matrix_base_version],
-          [tp_matrix_major_version.tp_matrix_minor_version.tp_matrix_micro_version])
-m4_define([tp_matrix_version],
-          [m4_if(tp_matrix_nano_version, 0,
-                 [tp_matrix_base_version],
-                 [tp_matrix_base_version].[tp_matrix_nano_version])])
+m4_define([cauchy_base_version],
+          [cauchy_major_version.cauchy_minor_version.cauchy_micro_version])
+m4_define([cauchy_version],
+          [m4_if(cauchy_nano_version, 0,
+                 [cauchy_base_version],
+                 [cauchy_base_version].[cauchy_nano_version])])
 
 ### Setup
 
 # Initialise autoconf with project details, version
-AC_INIT([telepathy-matrix], matrix_version,
-        [gergely@polonkai.eu], [telepathy-matrix])
+AC_INIT([telepathy-cauchy], cauchy_version,
+        [gergely@polonkai.eu], [telepathy-cauchy])
 
 # Enable silent build rules by default, requires at least
 # Automake-1.11. Disable by either passing --disable-silent-rules to

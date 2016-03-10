@@ -1,0 +1,9 @@
+[ConnectionManager]
+Name = cauchy
+BusName = org.freedesktop.Telepathy.ConnectionManager.cauchy
+ObjectPath = /org/freedesktop/Telepathy/ConnectionManager/cauchy
+
+[Protocol matrix]
+param-matrix-id = s required
+param-homeserver = s required
+param-password = s secret

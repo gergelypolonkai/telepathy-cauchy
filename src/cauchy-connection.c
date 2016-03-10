@@ -1,30 +1,30 @@
 /*
- * This file is part of telepathy-matrix
+ * This file is part of telepathy-cauchy
  *
- * telepathy-matrix is free software: you can redistribute it and/or
+ * telepathy-cauchy is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation, either
  * version 3 of the * License, or (at your option) any later
  * version.
  *
- * telepathy-matrix is distributed in the hope that it will be
+ * telepathy-cauchy is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with telepathy-matrix.  If not, see
+ * License along with telepathy-cauchy.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "matrix-connection.h"
+#include "cauchy-connection.h"
 
-#include "matrix-contact-info.h"
+#include "cauchy-contact-info.h"
 
 static void _aliasing_iface_init(gpointer, gpointer);
 
-struct _MatrixConnectionPrivate {
-    gchar *matrix_id;
+struct _CauchyConnectionPrivate {
+    gchar *cauchy_id;
     gchar *homeserver;
     gchar *password;
     GHashTable *aliases;
@@ -34,7 +34,7 @@ struct _MatrixConnectionPrivate {
 
 enum {
     PROP_0,
-    PROP_MATRIX_ID,
+    PROP_CAUCHY_ID,
     PROP_HOMESERVER,
     PROP_PASSWORD,
     PROP_COUNT
@@ -44,7 +44,7 @@ static const gchar *interfaces_always_present[] = {
     TP_IFACE_CONNECTION_INTERFACE_ALIASING,
     TP_IFACE_CONNECTION_INTERFACE_CONTACT_INFO,
     /* TODO:
-    MATRIX_IFACE_CONNECTION_INTERFACE_RENAMING,
+    CAUCHY_IFACE_CONNECTION_INTERFACE_RENAMING,
     */
     TP_IFACE_CONNECTION_INTERFACE_REQUESTS,
     TP_IFACE_CONNECTION_INTERFACE_CONTACTS,
@@ -52,16 +52,16 @@ static const gchar *interfaces_always_present[] = {
 };
 
 G_DEFINE_TYPE_WITH_CODE(
-        MatrixConnection, matrix_connection, TP_TYPE_BASE_CONNECTION,
+        CauchyConnection, cauchy_connection, TP_TYPE_BASE_CONNECTION,
         G_IMPLEMENT_INTERFACE(
             TP_TYPE_SVC_CONNECTION_INTERFACE_ALIASING,
             _aliasing_iface_init);
         G_IMPLEMENT_INTERFACE(
             TP_TYPE_SVC_CONNECTION_INTERFACE_CONTACT_INFO,
-            matrix_contact_info_iface_init);
+            cauchy_contact_info_iface_init);
         /* TODO:
         G_IMPLEMENT_INTERFACE(
-            MATRIX_TYPE_SVC_CONNECTION_INTERFACE_RENAMING,
+            CAUCHY_TYPE_SVC_CONNECTION_INTERFACE_RENAMING,
             _renaming_interface_init);
         */
         G_IMPLEMENT_INTERFACE(
@@ -70,18 +70,18 @@ G_DEFINE_TYPE_WITH_CODE(
     );
 
 static void
-matrix_connection_set_property(GObject *obj,
+cauchy_connection_set_property(GObject *obj,
                                guint prop_id,
                                const GValue *value,
                                GParamSpec *pspec)
 {
-    MatrixConnection *connection = MATRIX_CONNECTION(obj);
-    MatrixConnectionPrivate *priv = connection->priv;
+    CauchyConnection *connection = CAUCHY_CONNECTION(obj);
+    CauchyConnectionPrivate *priv = connection->priv;
 
     switch (prop_id) {
-        case PROP_MATRIX_ID:
-            g_free(priv->matrix_id);
-            priv->matrix_id = g_value_dup_string(value);
+        case PROP_CAUCHY_ID:
+            g_free(priv->cauchy_id);
+            priv->cauchy_id = g_value_dup_string(value);
 
             break;
 
@@ -105,17 +105,17 @@ matrix_connection_set_property(GObject *obj,
 }
 
 static void
-matrix_connection_get_property(GObject *obj,
+cauchy_connection_get_property(GObject *obj,
                                guint prop_id,
                                GValue *value,
                                GParamSpec *pspec)
 {
-    MatrixConnection *connection = MATRIX_CONNECTION(obj);
-    MatrixConnectionPrivate *priv = connection->priv;
+    CauchyConnection *connection = CAUCHY_CONNECTION(obj);
+    CauchyConnectionPrivate *priv = connection->priv;
 
     switch (prop_id) {
-        case PROP_MATRIX_ID:
-            g_value_set_string(value, priv->matrix_id);
+        case PROP_CAUCHY_ID:
+            g_value_set_string(value, priv->cauchy_id);
 
             break;
 
@@ -137,14 +137,14 @@ matrix_connection_get_property(GObject *obj,
 }
 
 static void
-matrix_connection_get_alias_flags(TpSvcConnectionInterfaceAliasing *iface,
+cauchy_connection_get_alias_flags(TpSvcConnectionInterfaceAliasing *iface,
                                   DBusGMethodInvocation *context)
 {
     tp_svc_connection_interface_aliasing_return_from_get_alias_flags(context, 0);
 }
 
 static const gchar *
-gimme_an_alias(MatrixConnection *connection,
+gimme_an_alias(CauchyConnection *connection,
                TpHandleRepoIface *repo,
                TpHandle handle)
 {
@@ -159,11 +159,11 @@ gimme_an_alias(MatrixConnection *connection,
 }
 
 static void
-matrix_connection_get_aliases(TpSvcConnectionInterfaceAliasing *iface,
+cauchy_connection_get_aliases(TpSvcConnectionInterfaceAliasing *iface,
                               const GArray *handles,
                               DBusGMethodInvocation *context)
 {
-    MatrixConnection *self = MATRIX_CONNECTION(iface);
+    CauchyConnection *self = CAUCHY_CONNECTION(iface);
     TpHandleRepoIface *repo = tp_base_connection_get_handles(
             TP_BASE_CONNECTION(iface),
             TP_HANDLE_TYPE_CONTACT);
@@ -192,11 +192,11 @@ matrix_connection_get_aliases(TpSvcConnectionInterfaceAliasing *iface,
 }
 
 static void
-matrix_connection_request_aliases(TpSvcConnectionInterfaceAliasing *iface,
+cauchy_connection_request_aliases(TpSvcConnectionInterfaceAliasing *iface,
                                   const GArray *handles,
                                   DBusGMethodInvocation *context)
 {
-    MatrixConnection *connection = MATRIX_CONNECTION(iface);
+    CauchyConnection *connection = CAUCHY_CONNECTION(iface);
     TpHandleRepoIface *repo = tp_base_connection_get_handles(
             TP_BASE_CONNECTION(iface), TP_HANDLE_TYPE_CONTACT);
     GError *err = NULL;
@@ -226,7 +226,7 @@ _aliasing_iface_init(gpointer g_iface, gpointer iface_data)
 {
     TpSvcConnectionInterfaceAliasingClass *klass = (TpSvcConnectionInterfaceAliasingClass *)g_iface;
 
-#define IMPLEMENT(x) tp_svc_connection_interface_aliasing_implement_##x(klass, matrix_connection_##x)
+#define IMPLEMENT(x) tp_svc_connection_interface_aliasing_implement_##x(klass, cauchy_connection_##x)
     IMPLEMENT(get_alias_flags);
     IMPLEMENT(get_aliases);
     IMPLEMENT(request_aliases);
@@ -234,10 +234,10 @@ _aliasing_iface_init(gpointer g_iface, gpointer iface_data)
 }
 
 static void
-matrix_connection_finalize(GObject *gobject)
+cauchy_connection_finalize(GObject *gobject)
 {
     g_signal_handlers_destroy(gobject);
-    G_OBJECT_CLASS(matrix_connection_parent_class)->finalize(gobject);
+    G_OBJECT_CLASS(cauchy_connection_parent_class)->finalize(gobject);
 }
 
 static void
@@ -245,7 +245,7 @@ _aliasing_fill_contact_attributes(GObject *obj,
                                   const GArray *contacts,
                                   GHashTable *attributes_hash)
 {
-    MatrixConnection *connection = MATRIX_CONNECTION(obj);
+    CauchyConnection *connection = CAUCHY_CONNECTION(obj);
     TpHandleRepoIface *repo = tp_base_connection_get_handles(
             TP_BASE_CONNECTION(connection),
             TP_HANDLE_TYPE_CONTACT);
@@ -265,11 +265,11 @@ _aliasing_fill_contact_attributes(GObject *obj,
 }
 
 static void
-matrix_connection_constructed(GObject *obj)
+cauchy_connection_constructed(GObject *obj)
 {
-    MatrixConnection *connection = MATRIX_CONNECTION(obj);
+    CauchyConnection *connection = CAUCHY_CONNECTION(obj);
 
-    matrix_contact_info_init(connection);
+    cauchy_contact_info_init(connection);
     tp_contacts_mixin_add_contact_attributes_iface(
             obj,
             TP_IFACE_CONNECTION_INTERFACE_ALIASING,
@@ -277,10 +277,10 @@ matrix_connection_constructed(GObject *obj)
 }
 
 static void
-matrix_connection_dispose(GObject *obj)
+cauchy_connection_dispose(GObject *obj)
 {
-    MatrixConnection *connection = MATRIX_CONNECTION(obj);
-    MatrixConnectionPrivate *priv = connection->priv;
+    CauchyConnection *connection = CAUCHY_CONNECTION(obj);
+    CauchyConnectionPrivate *priv = connection->priv;
 
     if (priv->dispose_has_run) {
         return;
@@ -290,8 +290,8 @@ matrix_connection_dispose(GObject *obj)
 
     tp_clear_pointer(&priv->aliases, g_hash_table_unref);
 
-    if (G_OBJECT_CLASS(matrix_connection_parent_class)->dispose) {
-        G_OBJECT_CLASS(matrix_connection_parent_class)->dispose(obj);
+    if (G_OBJECT_CLASS(cauchy_connection_parent_class)->dispose) {
+        G_OBJECT_CLASS(cauchy_connection_parent_class)->dispose(obj);
     }
 }
 
@@ -303,35 +303,35 @@ _iface_create_handle_repos(TpBaseConnection *connection,
         repos[i] = NULL;
     }
 
-//    TODO matrix_handle_repos_init(repos);
+//    TODO cauchy_handle_repos_init(repos);
 }
 
 static gchar *
 _iface_get_unique_connection_name(TpBaseConnection *base)
 {
-    MatrixConnection *connection = MATRIX_CONNECTION(base);
-    MatrixConnectionPrivate *priv = connection->priv;
+    CauchyConnection *connection = CAUCHY_CONNECTION(base);
+    CauchyConnectionPrivate *priv = connection->priv;
 
     return g_strdup_printf(
             "@%s:%s%p",
-            priv->matrix_id, priv->homeserver, connection);
+            priv->cauchy_id, priv->homeserver, connection);
 }
 
 static GPtrArray *
 _iface_create_channel_managers(TpBaseConnection *base)
 {
-    MatrixConnection *connection = MATRIX_CONNECTION(base);
-    MatrixConnectionPrivate *priv = connection->priv;
+    CauchyConnection *connection = CAUCHY_CONNECTION(base);
+    CauchyConnectionPrivate *priv = connection->priv;
     GPtrArray *managers = g_ptr_array_sized_new(1);
     //GObject *manager;
 
     /* TODO:
-    manager = g_object_new(MATRIX_TYPE_IM_MANAGER,
+    manager = g_object_new(CAUCHY_TYPE_IM_MANAGER,
                            "connection", connection,
                            NULL);
     g_ptr_array_add(managers, manager);
 
-    manager = g_object_new(MATRIX_TYPE_IM_MUC_MANAGER,
+    manager = g_object_new(CAUCHY_TYPE_IM_MUC_MANAGER,
                            "connection", connection,
                            NULL);
     */
@@ -340,7 +340,7 @@ _iface_create_channel_managers(TpBaseConnection *base)
     g_ptr_array_add(managers, priv->password_manager);
 
     /* TODO:
-    manager = g_object_new(MATRIX_TYPE_ROOMLIST_MANAGER,
+    manager = g_object_new(CAUCHY_TYPE_ROOMLIST_MANAGER,
                            "connection", connection,
                            NULL);
     g_ptr_array_add(managers, manager);
@@ -359,19 +359,19 @@ _iface_disconnected(TpBaseConnection *base)
 {}
 
 static void
-matrix_connection_class_init(MatrixConnectionClass *klass)
+cauchy_connection_class_init(CauchyConnectionClass *klass)
 {
     GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
     TpBaseConnectionClass *parent_class = TP_BASE_CONNECTION_CLASS(klass);
     GParamSpec *param_spec;
 
-    g_type_class_add_private(klass, sizeof(MatrixConnectionPrivate));
+    g_type_class_add_private(klass, sizeof(CauchyConnectionPrivate));
 
-    gobject_class->constructed = matrix_connection_constructed;
-    gobject_class->set_property = matrix_connection_set_property;
-    gobject_class->get_property = matrix_connection_get_property;
-    gobject_class->dispose = matrix_connection_dispose;
-    gobject_class->finalize = matrix_connection_finalize;
+    gobject_class->constructed = cauchy_connection_constructed;
+    gobject_class->set_property = cauchy_connection_set_property;
+    gobject_class->get_property = cauchy_connection_get_property;
+    gobject_class->dispose = cauchy_connection_dispose;
+    gobject_class->finalize = cauchy_connection_finalize;
 
     parent_class->create_handle_repos = _iface_create_handle_repos;
     parent_class->get_unique_connection_name = _iface_get_unique_connection_name;
@@ -387,12 +387,12 @@ matrix_connection_class_init(MatrixConnectionClass *klass)
     */
 
     param_spec = g_param_spec_string(
-            "matrix-id",
-            "Matrix ID",
-            "Your registered Matrix ID",
+            "cauchy-id",
+            "Cauchy ID",
+            "Your registered Cauchy ID",
             NULL,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-    g_object_class_install_property(gobject_class, PROP_MATRIX_ID, param_spec);
+    g_object_class_install_property(gobject_class, PROP_CAUCHY_ID, param_spec);
 
     param_spec = g_param_spec_string(
             "homeserver",
@@ -410,29 +410,29 @@ matrix_connection_class_init(MatrixConnectionClass *klass)
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
     g_object_class_install_property(gobject_class, PROP_PASSWORD, param_spec);
 
-    tp_contacts_mixin_class_init(gobject_class, G_STRUCT_OFFSET(MatrixConnectionClass, contacts));
-    matrix_contact_info_class_init(klass);
+    tp_contacts_mixin_class_init(gobject_class, G_STRUCT_OFFSET(CauchyConnectionClass, contacts));
+    cauchy_contact_info_class_init(klass);
 }
 
 static void
-matrix_connection_init(MatrixConnection *connection)
+cauchy_connection_init(CauchyConnection *connection)
 {
-    MatrixConnectionPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(
+    CauchyConnectionPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(
             connection,
-            MATRIX_TYPE_CONNECTION, MatrixConnectionPrivate);
+            CAUCHY_TYPE_CONNECTION, CauchyConnectionPrivate);
 
     connection->priv = priv;
     priv->aliases = g_hash_table_new_full(NULL, NULL, NULL, g_free);
 
     tp_contacts_mixin_init(
             G_OBJECT(connection),
-            G_STRUCT_OFFSET(MatrixConnection, contacts));
+            G_STRUCT_OFFSET(CauchyConnection, contacts));
     tp_base_connection_register_with_contacts_mixin(
             (TpBaseConnection *)connection);
 }
 
 const gchar * const *
-matrix_connection_get_implemented_interfaces(void)
+cauchy_connection_get_implemented_interfaces(void)
 {
     /* We don’t have any conditionally implemented interfaces */
 

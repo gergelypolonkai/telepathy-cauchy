@@ -1,12 +1,12 @@
 # Telepathy manager file
 managerdir = $(datadir)/telepathy/managers
-manager_DATA = matrix.manager
+manager_DATA = cauchy.manager
 
 # Dbus service file
 BUILT_FILES = $(service_in_files:.service.in=.service)
 
 servicedir = $(DBUS_SERVICES_DIR)
-service_in_files = org.freedesktop.Telepathy.ConnectionManager.matrix.service.in
+service_in_files = org.freedesktop.Telepathy.ConnectionManager.cauchy.service.in
 service_DATA = $(BUILT_FILES)
 CLEANFILES = $(BUILT_FILES)
 
