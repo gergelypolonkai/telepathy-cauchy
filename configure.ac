@@ -1,48 +1,49 @@
-AC_PREREQ([2.60])
+# Process this file with autoconf to produce a configure script
 
-# Making releases:
-#   set the new version number:
-#     odd minor -> development series
-#     even minor -> stable series
-#     increment micro for each release within a series
-#   set nano_version to 0
-#   make the release, tag it
-#   set nano_version to 1
+### Version numbers
 
-m4_define([matrix_major_version], [0])
-m4_define([matrix_minor_version], [0])
-m4_define([matrix_micro_version], [0])
-m4_define([matrix_nano_version], [1])
+# Release Versions
+m4_define([tp_matrix_major_version], [0])
+m4_define([tp_matrix_minor_version], [0])
+m4_define([tp_matrix_micro_version], [0])
+m4_define([tp_matrix_nano_version], [1])
 
-m4_define([matrix_base_version],
-          [matrix_major_version.matrix_minor_version.matrix_micro_version])
-m4_define([matrix_version],
-          [m4_if(matrix_nano_version, 0,
-                 [matrix_base_version],
-                 [matrix_base_version].[matrix_nano_version])])
+m4_define([tp_matrix_base_version],
+          [tp_matrix_major_version.tp_matrix_minor_version.tp_matrix_micro_version])
+m4_define([tp_matrix_version],
+          [m4_if(tp_matrix_nano_version, 0,
+                 [tp_matrix_base_version],
+                 [tp_matrix_base_version].[tp_matrix_nano_version])])
 
-AC_INIT([telepathy-matrix], [matrix_version])
+### Setup
 
-AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_AUX_DIR([build-aux])
+# Initialise autoconf with project details, version
+AC_INIT([telepathy-matrix], matrix_version,
+        [gergely@polonkai.eu], [telepathy-matrix])
 
 # Enable silent build rules by default, requires at least
 # Automake-1.11. Disable by either passing --disable-silent-rules to
 # configure or passing V=1 to make
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-AM_INIT_AUTOMAKE([1.9 -Wno-portability subdir-objects])
+AC_PREREQ([2.60])
 
-AM_PROG_LIBTOOL
+AC_CONFIG_MACRO_DIR([m4])
 AM_CONFIG_HEADER(config.h)
-AC_PROG_MKDIR_P
+AC_CONFIG_AUX_DIR([build-aux])
+AM_INIT_AUTOMAKE([1.9 -Wno-portability subdir-objects])
 
 dnl check for tools
 AC_PROG_CC
 AC_PROG_CC_STDC
+AM_PROG_LIBTOOL
+AC_PROG_MKDIR_P
 AM_PROG_AS
 
-AS_IF([test matrix_nano_version = 0],
+VALAC_CHECK
+
+
+AS_IF([test tp_matrix_nano_version = 0],
 [ # version x.y.z - "official release",
   # disable extra checks by default
   AC_ARG_ENABLE([fatal-warnings],
@@ -104,26 +105,6 @@ AC_CHECK_PROGS([XSLTPROC], [xsltproc])
 AS_IF([test -z "$XSLTPROC"],
   [AC_MSG_ERROR([xsltproc (from the libxslt source package) is required])])
 
-AM_PATH_PYTHON([2.3])
-
-dnl check for a version of python that can run the twisted tests
-AC_MSG_CHECKING([for Python with Twisted and IRC protocol support])
-for TEST_PYTHON in python2.5 python2.6 python; do
-  AS_IF([$TEST_PYTHON -c "from sys import version_info; import dbus, dbus.mainloop.glib; raise SystemExit(version_info < (2, 5, 0, 'final', 0))" >/dev/null 2>&1],
-    [
-    AS_IF([$TEST_PYTHON -c "import twisted.words.protocols.irc, twisted.internet.reactor" >/dev/null 2>&1],
-      [
-      AM_CONDITIONAL([WANT_TWISTED_TESTS], [true])
-      break
-      ],
-      [TEST_PYTHON=no])
-    ])
-done
-AC_MSG_RESULT([$TEST_PYTHON])
-AC_SUBST(TEST_PYTHON)
-AM_CONDITIONAL([WANT_TWISTED_TESTS], test xno != x$TEST_PYTHON)
-
-
 AS_AC_EXPAND(DATADIR, $datadir)
 DBUS_SERVICES_DIR="$DATADIR/dbus-1/services"
 AC_SUBST(DBUS_SERVICES_DIR)
@@ -131,12 +112,11 @@ AC_DEFINE_UNQUOTED(DBUS_SERVICES_DIR, "$DBUS_SERVICES_DIR", [DBus services direc
 
 AC_CHECK_FUNCS(strnlen)
 
-AC_OUTPUT( Makefile \
-           data/Makefile \
-           m4/Makefile \
-           src/Makefile \
-dnl           tests/Makefile \
-dnl           tests/twisted/Makefile \
-dnl           tests/twisted/tools/Makefile \
-           tools/Makefile \
-)
+AC_CONFIG_FILES([
+    Makefile
+    data/Makefile
+    m4/Makefile
+    src/Makefile
+    tools/Makefile
+])
+AC_OUTPUT
