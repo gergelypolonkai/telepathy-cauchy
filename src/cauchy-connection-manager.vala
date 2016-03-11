@@ -24,7 +24,7 @@ public class Cauchy.ConnectionManager : BaseConnectionManager {
         cm_dbus_name = "cauchy";
     }
 
-    // construct {
-    //     add_protocol(new Protocol());
-    // }
+    construct {
+        add_protocol(new Cauchy.Protocol());
+    }
 }

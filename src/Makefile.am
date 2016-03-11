@@ -5,12 +5,15 @@ libexec_PROGRAMS = telepathy-cauchy
 
 AM_VALAFLAGS = \
 	-C \
+	-H cauchy.h \
+	--use-header \
 	tp-base.vapi \
 	--pkg=telepathy-glib \
 	$(NULL)
 
 libtp_cauchy_convenience_la_VALA_SOURCES = \
 	cauchy-connection-manager.vala \
+	cauchy-protocol.vala \
 	$(NULL)
 
 vala-stamp: $(libtp_cauchy_convenience_la_VALA_SOURCES)
@@ -40,8 +43,6 @@ libcauchy_convenience_la_SOURCES = \
 	$(libtp_cauchy_convenience_la_VALA_SOURCES:.vala=.c) \
 	cauchy-connection.c \
 	cauchy-connection.h \
-	cauchy-protocol.c \
-	cauchy-protocol.h \
 	cauchy-debug.c \
 	cauchy-debug.h \
 	cauchy-handles.c \
