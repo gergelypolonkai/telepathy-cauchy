@@ -3,9 +3,14 @@ CLEANFILES = $(BUILT_SOURCES) $(man_MANS)
 
 libexec_PROGRAMS = telepathy-cauchy
 
-AM_VALAFLAGS = -C --pkg=telepathy-glib
+AM_VALAFLAGS = \
+	-C \
+	tp-base.vapi \
+	--pkg=telepathy-glib \
+	$(NULL)
 
 libtp_cauchy_convenience_la_VALA_SOURCES = \
+	cauchy-connection-manager.vala \
 	$(NULL)
 
 vala-stamp: $(libtp_cauchy_convenience_la_VALA_SOURCES)
@@ -33,8 +38,6 @@ $(libtp_cauchy_convenience_la_VALA_SOURCES:.vala=.c): vala-stamp
 
 libcauchy_convenience_la_SOURCES = \
 	$(libtp_cauchy_convenience_la_VALA_SOURCES:.vala=.c) \
-	cauchy-connection-manager.c \
-	cauchy-connection-manager.h \
 	cauchy-connection.c \
 	cauchy-connection.h \
 	cauchy-protocol.c \
