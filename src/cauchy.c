@@ -20,37 +20,17 @@
 
 #include <telepathy-glib/telepathy-glib.h>
 
-#include "cauchy-connection-manager.h"
+#include "cauchy.h"
 #include "cauchy-debug.h"
-
-static TpBaseConnectionManager *
-_construct_cm(void)
-{
-    TpBaseConnectionManager *base_cm = TP_BASE_CONNECTION_MANAGER(
-            g_object_new(CAUCHY_TYPE_CONNECTION_MANAGER, NULL));
-
-    return base_cm;
-}
 
 int
 main(int argc, char **argv)
 {
-    TpDebugSender *debug_sender;
-    int result;
+    CauchyConnectionManager *cm;
 
-    g_type_init();
-    tp_debug_divert_messages(g_getenv("CAUCHY_LOGFILE"));
+    cm = cauchy_connection_manager_new();
+    cauchy_connection_manager_run(cm);
+    g_object_unref(cm);
 
-    cauchy_debug_init();
-
-    debug_sender = tp_debug_sender_dup();
-
-    result = tp_run_connection_manager(
-            "telepathy-cauchy", VERSION,
-            _construct_cm,
-            argc, argv);
-
-    g_object_unref (debug_sender);
-
-    return result;
+    return 0;
 }

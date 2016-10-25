@@ -21,6 +21,8 @@ namespace TelepathyGLib {
     public abstract class BaseProtocol : GLib.Object {
         [CCode (has_construct_function = false)]
         public BaseProtocol();
+
+        public string name { get; construct; }
     }
 
     [CCode (cheader_filename = "telepathy-glib/telepathy-glib.h")]

@@ -18,4 +18,22 @@
 
 using TelepathyGLib;
 
-public class Cauchy.Protocol : BaseProtocol {}
+[DBus (name = "org.freedesktop.Telepathy.Protocol")]
+public class Cauchy.Protocol : Object {
+    public void
+    identify_account(HashTable<string, Variant> parameters,
+                     out string account_id)
+        throws TelepathyGLib.Error
+    {
+        throw new TelepathyGLib.Error.NOT_IMPLEMENTED(
+                "This feature is not implemented");
+    }
+
+    public void
+    normalize_contact(string contact_id, out string normalized_contact_id)
+        throws TelepathyGLib.Error
+    {
+        throw new TelepathyGLib.Error.NOT_IMPLEMENTED(
+                "This feature is meaningless on Matrix");
+    }
+}
